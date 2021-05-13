@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模态窗tab切换</title>
+</head>
+
+<body>
+    <div role="tabpanel">
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link" class={{PCATabClass}} (click)="Switch('PCA')" data-toggle="tab">PCA主成分分析</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" class={{spectrumTabClass}} (click)="Switch('spectrum')"
+                    data-toggle="tab">非平稳信号频谱分析</a>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div id="PCA" class="container tab-pane" [class]=this.PCAContainerClass><br>
+                <app-algorithm-form></app-algorithm-form>
+            </div>
+            <div id="spectrum" class="container tab-pane" [class]=this.spectrumContainerClass><br>
+                <app-algorithm-spectrum></app-algorithm-spectrum>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS网页轮播图</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0
+    }
+
+    li {
+        list-style: none;
+    }
+
+    a {
+        color: #666;
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: #e33333;
+    }
+
+    .w {
+        width: 1200px;
+        margin: 0 auto;
+    }
+
+    .main {
+        width: 980px;
+        height: 455px;
+        margin-left: 219px;
+        margin-top: 10px;
+    }
+
+    .fl {
+        float: left;
+    }
+
+    .focus {
+        position: relative;
+        width: 721px;
+        height: 455px;
+        background-color: purple;
+        overflow: hidden;
+    }
+
+    .focus ul {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 600%;
+    }
+
+    .focus ul li {
+        float: left;
+        text-align: center;
+    }
+
+    .arrow-l,
+    .arrow-r {
+        /* display: none; */
+        position: absolute;
+        top: 50%;
+        margin-top: -20px;
+        width: 24px;
+        height: 40px;
+        background: rgba(0, 0, 0, .3);
+        text-align: center;
+        line-height: 40px;
+        color: #fff;
+        font-size: 18px;
+        z-index: 2;
+    }
+
+    .arrow-r {
+        right: 0;
+    }
+
+    .circle {
+        position: absolute;
+        bottom: 10px;
+        left: 50px;
+    }
+
+    .circle li {
+        float: left;
+        width: 8px;
+        height: 8px;
+        /*background-color: #fff;*/
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        margin: 0 3px;
+        border-radius: 50%;
+        /*鼠标经过显示小手*/
+        cursor: pointer;
+    }
+
+    .current {
+        background-color: #fff;
+    }
+</style>
+
+<body>
+    <div class="w">
+        <div class="main">
+            <div class="focus fl">
+                <!-- 左侧按钮 -->
+                <a href="javascript:;" class="arrow-l">&lt;</a>
+                <!-- 右侧按钮 -->
+                <a href="javascript:;" class="arrow-r">&lt;</a>
+                <!-- 核心滚动区域 -->
+                <ul>
+                    <li>
+                        <a href="#"><img src="focus.jpg" alt=""></a>
+                    </li>
+                    <li>
+                        <a href="#"><img src="focus1.jpg" alt=""></a>
+                    </li>
+                    <li>
+                        <a href="#"><img src="focus2.jpg" alt=""></a>
+                    </li>
+                    <li>
+                        <a href="#"><img src="focus3.jpg" alt=""></a>
+                    </li>
+                </ul>
+                <!-- 下方小圆圈 -->
+                <ol class="circle">
+                </ol>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    window.addEventListener('load', function () {
+        // 鼠标移动显示隐藏左右按钮
+        var focus = document.querySelector('.focus')
+        var arrow_l = document.querySelector('.arrow-l')
+        var arrow_r = document.querySelector('.arrow-r')
+        var num = 0
+        var focusWidth = focus.offsetWidth
+        focus.addEventListener('mouseenter', function () {
+            arrow_l.style.display = 'block'
+            arrow_r.style.display = 'block'
+            clearInterval(timer)
+            timer = null//清除定时器变量
+        })
+        focus.addEventListener('mouseleave', function () {
+            arrow_l.style.display = 'none'
+            arrow_r.style.display = 'none'
+            timer = setInterval(function () {
+                // 手动调用点击事件
+                arrow_r.click();
+            }, 2000)
+        })
+        // 动态生成小圆圈,并实现小圆圈切换图片
+        var ul = focus.querySelector('ul');
+        var ol = focus.querySelector('.circle');
+        for (var i = 0; i < ul.children.length; i++) {
+            var li = document.createElement('li');
+            li.setAttribute('index', i);
+            ol.appendChild(li);
+            // 点击小圆圈切换对应的图
+            li.addEventListener('click', function () {
+                for (var i = 0; i < ol.children.length; i++) {
+                    ol.children[i].className = '';
+                    this.className = 'current';
+                    var index = this.getAttribute('index');
+                    animate(ul, -index * focusWidth);
+                    num = index
+                }
+            })
+        }
+        ol.children[0].className = 'current';
+        // 点击左右按钮切换一张图片
+        var first = ul.children[0].cloneNode(true);
+        ul.appendChild(first);
+        arrow_r.addEventListener('click', function () {
+            if (num == ul.children.length - 1) {
+                ul.style.left = 0;
+                num = 0;
+            }
+            num++;
+            animate(ul, -num * focusWidth);
+            circleChange();
+        })
+        arrow_l.addEventListener('click', function () {
+            if (num == 0) {
+                num = ul.children.length - 1;
+                ul.style.left = -num * focusWidth + 'px';
+            }
+            num--;
+            animate(ul, -num * focusWidth);
+            circleChange();
+        })
+        // 自动播放功能
+        var timer = setInterval(function () {
+            // 手动调用点击事件
+            arrow_r.click();
+        }, 2000)
+        // 圆圈切换函数
+        function circleChange() {
+            for (var i = 0; i < ol.children.length; i++) {
+                ol.children[i].className = '';
+                ol.children[num % 4].className = 'current';
+            }
+        }
+    })
+    // 封装好的动画函数
+    function animate(obj, target, callback) {
+        clearInterval(obj.timer);
+        obj.timer = setInterval(function () {
+            var step = (target - obj.offsetLeft) / 10;
+            step = step > 0 ? Math.ceil(step) : Math.floor(step);
+            if (obj.offsetLeft == target) {
+                clearInterval(obj.timer);
+                callback && callback();
+            }
+            obj.style.left = obj.offsetLeft + step + 'px';
+        }, 15);
+    }
+</script>
+
+</html>

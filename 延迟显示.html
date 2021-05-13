@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>延迟显示</title>
+</head>
+
+<body>
+    div class="h-34" style="font-size: 24px; text-align: center;font-weight: bold;" *ngIf="delay;else elseBlock0">
+    0
+    </div>
+    <ng-template #elseBlock0>
+        <div class="h-34" style="font-size: 24px; text-align: center;font-weight: bold;"
+            [style.color]="this.listOfData[0].statusBar">
+            {{ listOfData[0].numericalValue |number:'1.0-3'}}
+        </div>
+    </ng-template>
+</body>
+
+</html>
